@@ -1,44 +1,48 @@
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:your_app/main.dart'; // Make sure to import your main file
+import 'package:flutter/services.dart';
+import 'package:your_app/main.dart'; // Replace 'your_app' with your actual package name
 
 void main() {
-  const MethodChannel channel = MethodChannel('com.example.java_in_flutter/reverse_shell');
-
+  // Define a mock MethodChannel to intercept and handle method calls
+  const MethodChannel channel = MethodChannel('com.example.helloworld/reverse_shell');
+  
+  // Create a mock for the method call
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  setUp(() {
-    // Set up the mock method channel to return a specific result when invoked
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      if (methodCall.method == 'runJavaPayload') {
-        return 'Java Payload executed successfully';
-      }
-      return null;
-    });
+  channel.setMethodCallHandler((MethodCall methodCall) async {
+    if (methodCall.method == 'runJavaPayload') {
+      return 'Java Payload executed successfully';
+    }
+    return null;
   });
 
-  tearDown(() {
-    channel.setMockMethodCallHandler(null);
-  });
-
-  testWidgets('Run Java Payload', (WidgetTester tester) async {
-    // Build the app and trigger a frame
+  testWidgets('MyHomePage has a title and input fields', (WidgetTester tester) async {
+    // Build the MyHomePage widget
     await tester.pumpWidget(MyApp());
 
-    // Verify that the UI has loaded the text fields and button
-    expect(find.text('Enter IP Address'), findsOneWidget);
-    expect(find.text('Enter Port'), findsOneWidget);
-    expect(find.text('Run Java Payload'), findsOneWidget);
+    // Verify the title is present
+    expect(find.text('Run Java Code in Flutter'), findsOneWidget);
 
-    // Simulate entering IP and port and running the Java payload
+    // Verify the presence of IP and Port text fields
+    expect(find.byType(TextField), findsNWidgets(2));
+
+    // Verify the presence of the button
+    expect(find.byType(ElevatedButton), findsOneWidget);
+  });
+
+  testWidgets('Enter IP and Port and press button', (WidgetTester tester) async {
+    // Build the MyHomePage widget
+    await tester.pumpWidget(MyApp());
+
+    // Enter IP and Port
     await tester.enterText(find.byType(TextField).at(0), '127.0.0.1');
     await tester.enterText(find.byType(TextField).at(1), '4444');
-    await tester.tap(find.text('Run Java Payload'));
 
-    // Let the UI update
-    await tester.pump();
+    // Tap the button
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump(); // Rebuild the widget after the state has changed
 
-    // Verify that the result text appears as expected
+    // Verify that the result text is displayed
     expect(find.text('Java Payload executed successfully'), findsOneWidget);
   });
 }
