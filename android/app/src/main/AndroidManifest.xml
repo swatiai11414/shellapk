@@ -1,18 +1,65 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.java_in_flutter">
+    package="com.example.helloworld">
 
     <!-- Permissions -->
+    <!-- Allows the app to access the internet -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Allows the app to check network connectivity -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Allows the app to access Wi-Fi state -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- Allows the app to use GPS location services -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Allows the app to prevent the device from sleeping -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Allows the app to use foreground services -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- Allows the app to read external storage -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- Allows the app to write to external storage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- Allows the app to access the camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Allows the app to use Bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- Allows the app to manage device’s phone calls -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!-- Allows the app to send SMS messages -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <!-- Allows the app to use sensors -->
+    <uses-permission android:name="android.permission.USE_SENSORS" />
+
+    <!-- Allows the app to use accounts and sync data -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
+    <!-- Allows the app to use the device’s media -->
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <!-- Application -->
     <application
-        android:label="java_in_flutter"
+        android:label="Helloworld"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"> <!-- Allow cleartext traffic if needed -->
 
+        <!-- Main activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,11 +72,17 @@
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
+                
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Optionally define services, receivers, or providers here -->
+        <!-- Example:
+        <service android:name=".MyService"
+                 android:exported="true" />
+        -->
     </application>
 </manifest>
